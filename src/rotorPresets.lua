@@ -18,8 +18,11 @@ local presets = {
 
 };
 
-function M.getPreset(code)
+
+function M.getPreset (code)
+
     return presets[code];
+
 end;
 
 

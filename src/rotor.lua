@@ -1,7 +1,6 @@
 local M = {};
 
 local alphabet = {"A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"};
-local referenceAlphabet = alphabet;
 
 
 function M.create (wiringTable, turningNotch)
@@ -9,7 +8,7 @@ function M.create (wiringTable, turningNotch)
     return {
         wiringTable         = wiringTable;
         alphabet            = alphabet;
-        referenceAlphabet   = referenceAlphabet;
+        referenceAlphabet   = alphabet;
         turningNotch        = turningNotch;
         rolled              = false;
     };
@@ -17,7 +16,7 @@ function M.create (wiringTable, turningNotch)
 end;
 
 
-local function encodeIn(rotor, char)
+local function encodeIn (rotor, char)
 
     local charPos, wiringTablePos = 0;
 
@@ -39,7 +38,7 @@ local function encodeIn(rotor, char)
 
 end;
 
-local function encodeOut(rotor, char)
+local function encodeOut (rotor, char)
 
     local charPos, alphabetPos = 0;
 
@@ -76,7 +75,7 @@ function M.encode (rotor, char, cycle)
 end;
 
 
-function M.roll(rotor)
+function M.roll (rotor)
 
     local rollTable, rollAlphabet = {}, {};
 
@@ -94,7 +93,7 @@ function M.roll(rotor)
 
 end;
 
-function M.rollTo(rotor, char)
+function M.rollTo (rotor, char)
 
     while rotor.alphabet[1] ~= char do
         M.roll(rotor);
@@ -102,7 +101,7 @@ function M.rollTo(rotor, char)
 
 end;
 
-function M.isOnTurningNotch(rotor)
+function M.isOnTurningNotch (rotor)
 
     return rotor.alphabet[1] == rotor.turningNotch;
 

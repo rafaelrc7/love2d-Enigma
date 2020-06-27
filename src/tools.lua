@@ -1,6 +1,6 @@
 local M = {};
 
-function M.toCharArray(string)
+function M.toCharArray (string)
 
     local charArray = {};
 
@@ -12,7 +12,7 @@ function M.toCharArray(string)
 
 end;
 
-function M.printCharTable(charTable)
+function M.printCharTable (charTable)
 
     for i=1, #charTable do
         io.write(charTable[i]);

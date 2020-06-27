@@ -23,7 +23,7 @@ function M.create (rotorsTemplates, reflectorTemplate)
 end;
 
 
-local function step(enigma)
+local function step (enigma)
 
 	for i = 1, #enigma.rotors do
 		enigma.rotors[i].rolled = false;
@@ -75,8 +75,38 @@ end;
 function M.setPosition (enigma, positions)
 
 	for i = 1, #enigma.rotors do
-		rotor.rollTo(enigma.rotors[i], positions[i]);
+		if positions[i] ~= -1 then
+			rotor.rollTo(enigma.rotors[i], positions[i]);
+		end;
 	end;
+
+end;
+
+function M.setOnePosition (enigma, rotorNum, position)
+
+	local positions = {};
+
+	for i = 1, #enigma.rotors do
+		if i == rotorNum then
+			positions[i] = position;
+		else
+			positions[i] = -1;
+		end;
+	end;
+
+	M.setPosition (enigma, positions);
+
+end;
+
+function M.setRotor (enigma, rotorNum, newRotor)
+
+	enigma.rotors[rotorNum] = rotor.create(newRotor[1], newRotor[2]);
+
+end;
+
+function M.setReflector (enigma, newReflector)
+
+	enigma.reflector = rotor.create(newReflector[1], newReflector[2]);
 
 end;
 
