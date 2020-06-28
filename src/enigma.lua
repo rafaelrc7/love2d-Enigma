@@ -2,6 +2,39 @@ local M = {};
 
 local rotor = require "rotor";
 
+local function defaultPlugBoard()
+
+	return {
+		["A"] = "A",
+		["B"] = "B",
+		["C"] = "C",
+		["D"] = "D",
+		["E"] = "E",
+		["F"] = "F",
+		["G"] = "G",
+		["H"] = "H",
+		["I"] = "I",
+		["J"] = "J",
+		["K"] = "K",
+		["L"] = "L",
+		["M"] = "M",
+		["N"] = "N",
+		["O"] = "O",
+		["P"] = "P",
+		["Q"] = "Q",
+		["R"] = "R",
+		["S"] = "S",
+		["T"] = "T",
+		["U"] = "U",
+		["V"] = "V",
+		["W"] = "W",
+		["X"] = "X",
+		["Y"] = "Y",
+		["Z"] = "Z",
+	};
+
+end;
+
 
 function M.create (rotorsTemplates, reflectorTemplate)
 
@@ -16,7 +49,8 @@ function M.create (rotorsTemplates, reflectorTemplate)
 	return {
 
 		rotors 		= rotors,
-		reflector 	= reflector;
+		reflector 	= reflector,
+		plugBoard	= defaultPlugBoard(),
 
 	};
 
@@ -54,6 +88,8 @@ function M.encode (enigma, message)
 
 		if( char ~= ' ' ) then step(enigma); else goto continue; end;
 
+		message[key] = enigma.plugBoard[message[key]];
+
 		for i = #enigma.rotors, 1, -1 do
 			message[key] = rotor.encode( enigma.rotors[i], message[key], 0 );
 		end;
@@ -63,6 +99,8 @@ function M.encode (enigma, message)
 		for i = 1, #enigma.rotors do
 			message[key] = rotor.encode( enigma.rotors[i], message[key], 1 );
 		end;
+
+		message[key] = enigma.plugBoard[message[key]];
 
 		::continue::;
 
@@ -110,5 +148,23 @@ function M.setReflector (enigma, newReflector)
 
 end;
 
+function M.clearPlugBoard(enigma)
+
+	enigma.plugBoard = defaultPlugBoard();
+
+end;
+
+function M.createPlug(enigma, letters)
+
+	for _, letter in ipairs(letters) do
+		if enigma.plugBoard[letter] ~= letter then
+			enigma.plugBoard[ enigma.plugBoard[letter] ] = enigma.plugBoard[letter];
+			enigma.plugBoard[letter] = letter;
+		end;
+	end;
+
+	enigma.plugBoard[ letters[1] ], enigma.plugBoard[ letters[2] ] = letters[2], letters[1];
+
+end;
 
 return M;
