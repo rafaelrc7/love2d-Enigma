@@ -38,12 +38,12 @@ end;
 
 function M.create (rotorsTemplates, reflectorTemplate)
 
-	local rotors, reflector = {}, rotor.create(reflectorTemplate[1], reflectorTemplate[2]);
+	local rotors, reflector = {}, rotor.create(reflectorTemplate);
 
 	-- slow - medium - fast
 
 	for i = 1, #rotorsTemplates do
-		rotors[i] = rotor.create(rotorsTemplates[i][1], rotorsTemplates[i][2]);
+		rotors[i] = rotor.create(rotorsTemplates[i]);
 	end;
 
 	return {
@@ -86,7 +86,7 @@ function M.encode (enigma, message)
 
 	for key, char in pairs(message) do
 
-		if( char ~= ' ' ) then step(enigma); else goto continue; end;
+		if( char:match("%a") ) then step(enigma); else goto continue; end;
 
 		message[key] = enigma.plugBoard[message[key]];
 
@@ -138,13 +138,13 @@ end;
 
 function M.setRotor (enigma, rotorNum, newRotor)
 
-	enigma.rotors[rotorNum] = rotor.create(newRotor[1], newRotor[2]);
+	enigma.rotors[rotorNum] = rotor.create(newRotor);
 
 end;
 
 function M.setReflector (enigma, newReflector)
 
-	enigma.reflector = rotor.create(newReflector[1], newReflector[2]);
+	enigma.reflector = rotor.create(newReflector);
 
 end;
 
@@ -154,16 +154,17 @@ function M.clearPlugBoard(enigma)
 
 end;
 
-function M.createPlug(enigma, letters)
+function M.createPlug(enigma, plugs)
 
-	for _, letter in ipairs(letters) do
-		if enigma.plugBoard[letter] ~= letter then
-			enigma.plugBoard[ enigma.plugBoard[letter] ] = enigma.plugBoard[letter];
-			enigma.plugBoard[letter] = letter;
+	for _, plug in ipairs(plugs) do
+		for _, letter in ipairs(plug) do
+			if enigma.plugBoard[letter] ~= letter then
+				enigma.plugBoard[ enigma.plugBoard[letter] ] = enigma.plugBoard[letter];
+				enigma.plugBoard[letter] = letter;
+			end;
 		end;
+		enigma.plugBoard[ plug[1] ], enigma.plugBoard[ plug[2] ] = plug[2], plug[1];
 	end;
-
-	enigma.plugBoard[ letters[1] ], enigma.plugBoard[ letters[2] ] = letters[2], letters[1];
 
 end;
 

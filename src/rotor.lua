@@ -1,16 +1,20 @@
 local M = {};
 
-local alphabet = {"A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"};
+local function defaultAlphabet()
+
+    return {"A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"};
+
+end;
 
 
-function M.create (wiringTable, turningNotch)
+function M.create (rotorTemplate)
 
     return {
-        wiringTable         = wiringTable;
-        alphabet            = alphabet;
-        referenceAlphabet   = alphabet;
-        turningNotch        = turningNotch;
-        rolled              = false;
+        wiringTable         = rotorTemplate[1],
+        turningNotch        = rotorTemplate[2],
+        alphabet            = defaultAlphabet(),
+        referenceAlphabet   = defaultAlphabet(),
+        rolled              = false,
     };
 
 end;
