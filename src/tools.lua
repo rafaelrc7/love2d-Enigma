@@ -21,4 +21,19 @@ function M.printCharTable (charTable)
 
 end;
 
+function M.formatMessage (message, pieceSize);
+
+    local finalMessage = {};
+
+    for i = 1, #message do
+        table.insert(finalMessage, message[i]);
+        if i % pieceSize == 0 then
+            table.insert(finalMessage, " ");
+        end;
+    end;
+
+    return finalMessage;
+
+end;
+
 return M;

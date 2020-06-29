@@ -84,29 +84,33 @@ end;
 
 function M.encode (enigma, message)
 
+	local encodedMessage = {};
+
 	for key, char in pairs(message) do
 
-		if( char:match("%a") ) then step(enigma); else goto continue; end;
+		if( char:match("%a") ) then
 
-		message[key] = enigma.plugBoard[message[key]];
+			step(enigma);
 
-		for i = #enigma.rotors, 1, -1 do
-			message[key] = rotor.encode( enigma.rotors[i], message[key], 0 );
+			encodedMessage[#encodedMessage+1] = enigma.plugBoard[message[key]];
+
+			for i = #enigma.rotors, 1, -1 do
+				encodedMessage[#encodedMessage] = rotor.encode( enigma.rotors[i], encodedMessage[#encodedMessage], 0 );
+			end;
+
+			encodedMessage[#encodedMessage] = rotor.encode( enigma.reflector, encodedMessage[#encodedMessage], 0 );
+
+			for i = 1, #enigma.rotors do
+				encodedMessage[#encodedMessage] = rotor.encode( enigma.rotors[i], encodedMessage[#encodedMessage], 1 );
+			end;
+
+			encodedMessage[#encodedMessage] = enigma.plugBoard[encodedMessage[#encodedMessage]];
+
 		end;
-
-		message[key] = rotor.encode( enigma.reflector, message[key], 0 );
-
-		for i = 1, #enigma.rotors do
-			message[key] = rotor.encode( enigma.rotors[i], message[key], 1 );
-		end;
-
-		message[key] = enigma.plugBoard[message[key]];
-
-		::continue::;
 
 	end;
 
-	return message;
+	return encodedMessage;
 
 end;
 
