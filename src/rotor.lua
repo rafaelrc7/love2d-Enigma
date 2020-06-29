@@ -1,5 +1,6 @@
 local M = {};
 
+
 local function defaultAlphabet()
 
     return {"A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"};
@@ -12,6 +13,7 @@ function M.create (rotorTemplate)
     return {
         wiringTable         = rotorTemplate[1],
         turningNotch        = rotorTemplate[2],
+        name                = rotorTemplate[3],
         alphabet            = defaultAlphabet(),
         referenceAlphabet   = defaultAlphabet(),
         rolled              = false,
@@ -111,5 +113,16 @@ function M.isOnTurningNotch (rotor)
 
 end;
 
+function M.getPosition (rotor)
+
+    return rotor.alphabet[1];
+
+end;
+
+function M.getName (rotor)
+
+    return rotor.name;
+
+end;
 
 return M;

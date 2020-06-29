@@ -1,5 +1,6 @@
 local M = {};
 
+
 local rotor = require "rotor";
 
 local function defaultPlugBoard()
@@ -146,11 +147,29 @@ function M.setRotor (enigma, rotorNum, newRotor)
 
 end;
 
+function M.getRotor (enigma, rotorNum)
+
+	return rotor.getName(enigma.rotors[rotorNum]);
+
+end;
+
+function M.getRotorPos (enigma, rotorNum)
+
+	return rotor.getPosition(enigma.rotors[rotorNum]);
+
+end;
+
 function M.setReflector (enigma, newReflector)
 
 	enigma.reflector = rotor.create(newReflector);
 
 end;
+
+function M.getReflector (enigma)
+
+	return rotor.getName(enigma.reflector);
+
+end
 
 function M.clearPlugBoard(enigma)
 

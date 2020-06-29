@@ -1,20 +1,21 @@
 local M = {};
 
+
 local tools = require "tools";
 
 local presets = {
 
     -- Reflectors
-    ["A"]   =   { tools.toCharArray("EJMZALYXVBWFCRQUONTSPIKHGD"), " " },
-    ["B"]   =   { tools.toCharArray("YRUHQSLDPXNGOKMIEBFZCWVJAT"), " " },
-    ["C"]   =   { tools.toCharArray("FVPJIAOYEDRZXWGCTKUQSBNMHL"), " " },
+    ["A"]   =   { tools.toCharArray("EJMZALYXVBWFCRQUONTSPIKHGD"), " ", "A" },
+    ["B"]   =   { tools.toCharArray("YRUHQSLDPXNGOKMIEBFZCWVJAT"), " ", "B" },
+    ["C"]   =   { tools.toCharArray("FVPJIAOYEDRZXWGCTKUQSBNMHL"), " ", "C" },
 
     -- Rotors
-    ["I"]   =   { tools.toCharArray("EKMFLGDQVZNTOWYHXUSPAIBRCJ"), "Q" },
-    ["II"]  =   { tools.toCharArray("AJDKSIRUXBLHWTMCQGZNPYFVOE"), "E" },
-    ["III"] =   { tools.toCharArray("BDFHJLCPRTXVZNYEIWGAKMUSQO"), "V" },
-    ["IV"]  =   { tools.toCharArray("ESOVPZJAYQUIRHXLNFTGKDCMWB"), "J" },
-    ["V"]   =   { tools.toCharArray("VZBRGITYUPSDNHLXAWMJQOFECK"), "Z" };
+    ["I"]   =   { tools.toCharArray("EKMFLGDQVZNTOWYHXUSPAIBRCJ"), "Q", "I" },
+    ["II"]  =   { tools.toCharArray("AJDKSIRUXBLHWTMCQGZNPYFVOE"), "E", "II" },
+    ["III"] =   { tools.toCharArray("BDFHJLCPRTXVZNYEIWGAKMUSQO"), "V", "III" },
+    ["IV"]  =   { tools.toCharArray("ESOVPZJAYQUIRHXLNFTGKDCMWB"), "J", "IV" },
+    ["V"]   =   { tools.toCharArray("VZBRGITYUPSDNHLXAWMJQOFECK"), "Z", "V" };
 
 };
 

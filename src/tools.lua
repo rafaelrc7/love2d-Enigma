@@ -1,5 +1,6 @@
 local M = {};
 
+
 function M.toCharArray (string)
 
     local charArray = {};
@@ -12,6 +13,18 @@ function M.toCharArray (string)
 
 end;
 
+function M.toString (charTable)
+
+    local string = "";
+
+    for _, char in pairs(charTable) do
+        string = string .. char;
+    end;
+
+    return string;
+
+end;
+
 function M.printCharTable (charTable)
 
     for i=1, #charTable do
@@ -21,19 +34,5 @@ function M.printCharTable (charTable)
 
 end;
 
-function M.formatMessage (message, pieceSize);
-
-    local finalMessage = {};
-
-    for i = 1, #message do
-        table.insert(finalMessage, message[i]);
-        if i % pieceSize == 0 then
-            table.insert(finalMessage, " ");
-        end;
-    end;
-
-    return finalMessage;
-
-end;
 
 return M;
