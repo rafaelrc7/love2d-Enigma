@@ -1,37 +1,27 @@
-local Width, Height, sx, sy = 1538, 864;
-local mWidth, mHeight;
+local preset = require "rotorPresets";                      -- Imports
+local enigma = require "enigma";
+local tools = require "tools";
 
-local state = "MAIN";
+local Width, Height, sx, sy = 1538, 864;                    -- WidthxHeight e escalas
 
-local bg, btnLmpAtlas, btnQuad, lmpQuad, letterHighlight, plugBoard;
+local bg, btnLmpAtlas, btnQuad, lmpQuad, letterHighlight;   -- Objetos gráficos
+local printFont, boardFont, boardFontBold;                  -- Fontes
 local lmpCoords, btnCoords, plgCoords = {}, {}, {};
-local letterLayout = {
+local letterLayout = {                                      -- Layout do teclado (QWERTZ)
     {"Q", "W", "E", "R", "T", "Z", "U", "I", "O"},
     {"A", "S", "D", "F", "G", "H", "J", "K"},
     {"P", "Y", "X", "C", "V", "B", "N", "M", "L"},
 };
-local messageIn, messageOut = "", "";
-local rotorPositions;
-local printFont, boardFont, boardFontBold;
+local messageIn, messageOut = "", "";                       -- Input e output principais
+local rotorPositions, plugBoard = {};                       -- Posições dos rotores e estado do plugboard
 
-local rotorSel, lA, lB = false;
-local newRotors, newPositions = {}, {};
+local lA, lB;                                               -- Letras de novas conexões do plugboard
 
-local preset = require "rotorPresets";
-local enigma = require "enigma";
-local tools = require "tools";
-
+-- Criação do objeto Enigma
 local enMachine = enigma.create({preset.getPreset("I"), preset.getPreset("II"), preset.getPreset("III")}, preset.getPreset("B"));
 
 
-local function updateRotors()
-    enigma.setRotor(enMachine, 1, preset.getPreset(newRotors[1]));
-    enigma.setRotor(enMachine, 2, preset.getPreset(newRotors[2]));
-    enigma.setRotor(enMachine, 3, preset.getPreset(newRotors[3]));
-    enigma.setPosition(enMachine, {newPositions[1], newPositions[2], newPositions[3]});
-end;
-
-local function drawBackground()
+local function drawBackground()     -- Desenha a imagem de fundo, de acordo com a escala
 
     local x, y = bg:getDimensions();
 
@@ -40,7 +30,7 @@ local function drawBackground()
 
 end;
 
-local function drawText()
+local function drawText()           -- Desenha o texto dos dois cadernos
 
     love.graphics.setFont( printFont );
     love.graphics.setColor(0, 0, 0);
@@ -50,7 +40,7 @@ local function drawText()
 
 end;
 
-local function drawRotors()
+local function drawRotors()         -- Desenha as posições dos rotores
 
     love.graphics.setFont( boardFont );
     love.graphics.setColor(0, 0, 0);
@@ -58,23 +48,6 @@ local function drawRotors()
     for i = 1, #rotorPositions do
         love.graphics.printf(rotorPositions[i], sx*(1182 + 85*(i-1)), sy*434, sx*25, "center");
     end;
-
-end;
-
-local function drawRotorMenu()
-
-    local positionString = string.format("POSITIONS:\t%s\t%s\t%s", newPositions[1], newPositions[2], newPositions[3]);
-    local rotorString = string.format("ROTORS:\t%s\t%s\t%s", newRotors[1], newRotors[2], newRotors[3]);
-
-    love.graphics.setColor(0, 0, 0, 0.7)
-    love.graphics.rectangle("fill", 0, 0, Width, Height)
-    love.graphics.setColor(0.8, 0.8, 0.8)
-    love.graphics.rectangle("fill", Width/2-(mWidth/2), Height/2-(mHeight/2), mWidth, mHeight)
-
-    love.graphics.setColor(0, 0, 0);
-
-    love.graphics.printf(rotorString, Width/2-(mWidth/2), Height/2-(mHeight/3), mWidth,"center")
-    love.graphics.printf(positionString, Width/2-(mWidth/2), Height/2-(mHeight/4), mWidth,"center")
 
 end;
 
@@ -87,11 +60,10 @@ function love.load ()
     bg = love.graphics.newImage("images/Enigma_PUC.png");
     btnLmpAtlas = love.graphics.newImage("images/thumbs_enigma.png");
 
-    sx = Width / bg:getWidth();
+    sx = Width / bg:getWidth();     -- Calculo das escalas
     sy = Height / bg:getHeight();
 
     love.graphics.setLineWidth(3);
-    mWidth, mHeight = 1000*sx, 700*sy;
 
     printFont = love.graphics.newFont("fonts/Kingthings Trypewriter 2.ttf", 24*sx);
     boardFont = love.graphics.newFont("fonts/LiberationMono-Regular.ttf", 24*sx);
@@ -100,6 +72,7 @@ function love.load ()
     lmpQuad = love.graphics.newQuad(19, 30, 46, 46, btnLmpAtlas:getDimensions());
     btnQuad = love.graphics.newQuad(112, 32, 47, 47, btnLmpAtlas:getDimensions());
 
+    -- Calculo das coordenadas de todos os botões, lampadas e conexões do plugboard de acordo com a escala
     local xo, yo = 884, 584;
     for lNum, line in ipairs(letterLayout) do
         local x;
@@ -113,11 +86,11 @@ function love.load ()
         yo = yo + 64;
     end;
 
-    rotorPositions = {};
-
 end;
 
 function love.update(dt)
+
+    -- Pega a posição dos rotores e conexões do plugboard mais atualizadas
 
     for i = 1, #enMachine.rotors do
         rotorPositions[i] = enigma.getRotorPos(enMachine, i);
@@ -129,15 +102,20 @@ end;
 
 function love.textinput(t)
 
-    if not rotorSel then
-        messageIn = messageIn .. t:upper();
-        messageOut = messageOut .. tools.toString( enigma.encode(enMachine, tools.toCharArray(t:upper())) );
+    -- Recebe input do usuário e o codifica
 
-        if t:match("%a") then letterHighlight = {messageIn:sub(-1), messageOut:sub(-1)}; else letterHighlight = false; end;
+    messageIn = messageIn .. t:upper();
+    messageOut = messageOut .. tools.toString( enigma.encode(enMachine, tools.toCharArray(t:upper())) );
 
-        if #messageOut > 4 and (#messageOut+1) % 6 == 0 then
-            messageOut = messageOut .. " ";
-        end;
+    -- Se o input for válido, as coordenadas da tecla apertada (no teclado virtual) e da letra codificada no lampboard são guardadas,
+    -- se não, letterHighlight é definido como false
+
+    if t:match("%a") then letterHighlight = {messageIn:sub(-1), messageOut:sub(-1)}; else letterHighlight = false; end;
+
+    -- Quebra o output em grupos de 5 letras
+
+    if #messageOut > 4 and (#messageOut+1) % 6 == 0 then
+        messageOut = messageOut .. " ";
     end;
 
 end;
@@ -145,19 +123,10 @@ end;
 function love.mousepressed( x, y, button )
 
     if button == 1 then
-        if not rotorSel and x > 1159*sx and x < 1159*sx + 239*sx and y > 365*sy and y < 365*sy + 195*sy then
-            lA, lB = nil, nil;
-            newRotors = { enigma.getRotor(enMachine, 1), enigma.getRotor(enMachine, 2), enigma.getRotor(enMachine, 3) };
-            newPositions = rotorPositions;
-            rotorSel = true;
-        elseif rotorSel and (x < Width/2-(mWidth/2) or y < Height/2-(mHeight/2) or x > Width/2-(mWidth/2) + mWidth or y > Height/2-(mHeight/2) + mHeight) then
-            updateRotors();
-            rotorSel = false;
-        end;
 
-        if not rotorSel and not lA then
+        if not lA then                              -- Checa se uma primeira letra já foi selecionada
 
-            for _, letter in pairs(plugBoard) do
+            for _, letter in pairs(plugBoard) do    -- Checa se o click foi feito numa posição válida do plugboard
                 local d = math.sqrt( (x-plgCoords[letter].x )^2 + (y-plgCoords[letter].y)^2 );
 
                 if d <= 25*sx  then
@@ -167,9 +136,9 @@ function love.mousepressed( x, y, button )
 
             end;
 
-        elseif not rotorSel then
+        else
 
-            for _, letter in pairs(plugBoard) do
+            for _, letter in pairs(plugBoard) do    -- Caso uma primeira letra já foi selecionada, checa se o click foi valido para selecionar a segunda
                 local d = math.sqrt( (x-plgCoords[letter].x )^2 + (y-plgCoords[letter].y)^2 );
 
                 if d <= 25*sx  then
@@ -179,42 +148,33 @@ function love.mousepressed( x, y, button )
 
             end;
 
-            if lB then
+            if lB then                              -- Cria uma conexão do Plugboard caso duas letras válidas forem selecionadas e depois limpa as seleções
                 enigma.createPlug(enMachine, { {lA, lB} });
             end;
 
             lA, lB = nil, nil
         end;
 
-    elseif lA then
+    elseif lA then                                  -- Caso segundo click invalido, anula seleção
         lA, lB = nil, nil;
-    end;
-
-end;
-
-function love.keypressed(key)
-
-    if rotorSel and key == "escape" then
-        updateRotors();
-        rotorSel = false;
     end;
 
 end;
 
 function love.draw ()
 
-    drawBackground();
+    drawBackground();               -- Chama funções de desenho pre-criadas
     drawText();
     drawRotors();
 
     love.graphics.setColor(1,1,1);
 
-    if letterHighlight then
+    if letterHighlight then         -- Caso existam letras selecionadas, desenha o highlight nas coordenadas
         love.graphics.draw(btnLmpAtlas, lmpQuad, lmpCoords[letterHighlight[2]].x, lmpCoords[letterHighlight[2]].y, 0, sx, sy, 0);
         love.graphics.draw(btnLmpAtlas, btnQuad, btnCoords[letterHighlight[1]].x, btnCoords[letterHighlight[1]].y, 0, sx, sy, 0);
     end;
 
-    for i = 65, 90 do
+    for i = 65, 90 do               -- Imprime as letras no lampboard, teclado e plugboard e suas conexões
         love.graphics.setColor(1,1,1);
         local letter = string.char(i);
 
@@ -230,13 +190,9 @@ function love.draw ()
 
     end;
 
-    if lA then
+    if lA then                      -- Se existir uma primeira letra selecionada, desenha uma linha até o mouse
         local xm, ym = love.mouse.getPosition();
         love.graphics.line( plgCoords[lA].x, plgCoords[lA].y, xm, ym);
-    end;
-
-    if rotorSel then
-        drawRotorMenu();
     end;
 
 end;
