@@ -169,7 +169,13 @@ function M.getReflector (enigma)
 
 	return rotor.getName(enigma.reflector);
 
-end
+end;
+
+function M.getPlugboard (enigma)
+
+	return enigma.plugBoard;
+
+end;
 
 function M.clearPlugBoard(enigma)
 
