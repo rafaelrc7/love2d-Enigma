@@ -124,7 +124,7 @@ function love.load ()
         yo = yo + 64;
     end;
 
-    xo, yo = 1179*sx, (398)*sy;
+    xo, yo = 1176*sx, (398)*sy;
     for i = 1, 3 do
     	ctrlCoords[i] = { x=xo+(84*sx*i) - 48*sx, y=yo};
     end;
@@ -187,7 +187,23 @@ function love.mousepressed( x, y, button )
 
     if button == 1 then
 
-    	if y < 564 and not lA then
+        if y < 564 and not lA then
+
+            if x > (998 - 100)*sx and x < (998 - 100 + 200)*sx then
+                if y > (427-25)*sy and y < (427-25+50)*sy then
+                    messageIn = "";
+                    messageOut = "";
+                    return;
+                elseif y > (500-25)*sy and y < (500-25+50)*sy then
+                    local file = io.open("output.txt", "a");
+                    if file then
+                        file:write(os.date("%c\n") .. messageOut .. "\n\n");
+                        file:close();
+                    end;
+                    return;
+                end;
+            end;
+
     		for num, ctrlCoord in ipairs(ctrlCoords) do
                 local d = math.sqrt( (x-(ctrlCoord.x + sx*24))^2 + (y-(ctrlCoord.y + sy*16))^2 );
 
@@ -253,6 +269,15 @@ function love.draw ()
     drawBackground();               -- Chama funções de desenho pre-criadas
     drawText();
     drawRotors();
+
+    love.graphics.setColor(0.4, 0.4, 0.4);
+    love.graphics.rectangle("fill", (998 - 100)*sx, (427-25)*sy, 200*sx, 50*sy );
+    love.graphics.rectangle("fill", (998 - 100)*sx, (500-25)*sy, 200*sx, 50*sy );
+
+    love.graphics.setColor(0.1, 0.1, 0.1);
+    love.graphics.setFont(boardFontBold);
+    love.graphics.printf("CLEAR", (998-100)*sx, (417)*sy, 200*sx, "center");
+    love.graphics.printf("SAVE",  (998-100)*sx, (490)*sy, 200*sx, "center");
 
     love.graphics.setColor(1,1,1);
 
