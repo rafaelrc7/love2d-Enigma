@@ -43,9 +43,9 @@ end;
 local function drawRotors()         -- Desenha as posições dos rotores
 
     love.graphics.setFont( boardFont );
-    love.graphics.setColor(0, 0, 0);
 
     for i = 1, #rotorPositions do
+        if chgRtrPos == i then love.graphics.setColor(1, 0, 0); else love.graphics.setColor(0, 0, 0); end;
         love.graphics.printf(rotorPositions[i][1], sx*(1182 + 85*(i-1)), sy*449, sx*25, "center");
         love.graphics.printf(rotorPositions[i][2], sx*(1182 + 85*(i-1)), sy*(449 - 50), sx*25, "center");
         love.graphics.printf(rotorPositions[i][3], sx*(1182 + 85*(i-1)), sy*(449 + 50), sx*25, "center");
@@ -160,7 +160,7 @@ end;
 function love.textinput(t)
 
     if chgRtrPos then
-        enigma.setOnePosition(enMachine, chgRtrPos, t:upper());
+        if t:match("%a") then enigma.setOnePosition(enMachine, chgRtrPos, t:upper()); end;
         chgRtrPos = false;
         return;
     end;
