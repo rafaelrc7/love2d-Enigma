@@ -2,6 +2,10 @@ local preset = require "rotorPresets";                      -- Imports
 local enigma = require "enigma";
 local tools = require "tools";
 
+local isAppImage = false;
+
+if os.getenv("APPIMAGE") ~= nil then isAppImage = true end;
+
 local Width, Height, sx, sy = 1728, 972;                    -- WidthxHeight e escalas
 
 local bg, btnLmpAtlas, btnQuad, rtrCtrl, lmpQuad, letterHighlight;   -- Objetos gráficos
@@ -195,7 +199,14 @@ function love.mousepressed( x, y, button )
                     messageOut = "";
                     return;
                 elseif y > (500-25)*sy and y < (500-25+50)*sy then
-                    local file = io.open("output.txt", "a");
+                    local file;
+
+                    if isAppImage then
+                        file = io.open(os.getenv("APPIMAGE"):gsub("[^/]-$", "") .. "output.txt", "a");
+                    else
+                        file = io.open("output.txt", "a");
+                    end;
+
                     if file then
                         file:write(os.date("%c\n") .. messageOut .. "\n\n");
                         file:close();
